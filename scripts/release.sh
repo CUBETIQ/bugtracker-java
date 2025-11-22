@@ -39,6 +39,7 @@ VERSION=""
 TAG=""
 DRY_RUN=false
 FORCE=false
+RECREATE_TAG=false
 
 ###############################################################################
 # Functions
@@ -80,6 +81,7 @@ ${BLUE}OPTIONS:${NC}
   -t, --tag TAG            Set specific git tag (e.g., v1.2.0)
   -d, --dry-run            Show what would be done without making changes
   -f, --force              Skip confirmations
+  -r, --recreate-tag       Force recreate tag if it already exists (delete and recreate)
   -h, --help               Show this help message
 
 ${BLUE}EXAMPLES:${NC}
@@ -94,6 +96,9 @@ ${BLUE}EXAMPLES:${NC}
 
   # Force release without confirmations
   ./scripts/release.sh -v 1.2.0 --force
+
+  # Recreate a tag that already exists
+  ./scripts/release.sh -v 1.2.0 --recreate-tag
 
 ${BLUE}FEATURES:${NC}
   • Auto-detects current version from build.gradle
@@ -300,14 +305,28 @@ create_git_tag() {
     print_header "Creating Git Tag"
     
     if check_tag_exists "$TAG"; then
-        read -p "Tag exists. Overwrite? (yes/no): " overwrite
-        if [ "$overwrite" != "yes" ]; then
-            print_error "Release cancelled"
-            exit 1
-        fi
-        
-        if [ "$DRY_RUN" = false ]; then
-            git tag -d "$TAG" || true
+        if [ "$RECREATE_TAG" = true ]; then
+            print_warning "Tag exists - recreating as requested"
+            if [ "$DRY_RUN" = false ]; then
+                # Delete local tag
+                git tag -d "$TAG" || true
+                # Delete remote tag
+                local remote=$(git remote | head -n 1)
+                if [ -n "$remote" ]; then
+                    git push "$remote" --delete "$TAG" 2>/dev/null || print_info "Remote tag delete skipped"
+                fi
+                print_info "Deleted existing tag $TAG"
+            fi
+        else
+            read -p "Tag exists. Overwrite? (yes/no): " overwrite
+            if [ "$overwrite" != "yes" ]; then
+                print_error "Release cancelled"
+                exit 1
+            fi
+            
+            if [ "$DRY_RUN" = false ]; then
+                git tag -d "$TAG" || true
+            fi
         fi
     fi
     
@@ -449,6 +468,10 @@ main() {
                 ;;
             -f|--force)
                 FORCE=true
+                shift
+                ;;
+            -r|--recreate-tag)
+                RECREATE_TAG=true
                 shift
                 ;;
             -h|--help)
