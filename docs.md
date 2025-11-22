@@ -6,9 +6,9 @@ Complete documentation for integrating and using the BugTracker Java SDK in your
 
 1. [Overview](#overview)
 2. [Installation](#installation)
-   - [Gradle](#gradle)
-   - [Maven](#maven)
-   - [Manual JAR Installation](#manual-jar-installation)
+    - [Gradle](#gradle)
+    - [Maven](#maven)
+    - [Manual JAR Installation](#manual-jar-installation)
 3. [Quick Start](#quick-start)
 4. [Configuration](#configuration)
 5. [Core Features](#core-features)
@@ -23,14 +23,14 @@ Complete documentation for integrating and using the BugTracker Java SDK in your
 
 BugTracker is a flexible Sentry wrapper SDK for Java applications that provides:
 
-- **Error Tracking**: Automatic capture and reporting of exceptions
-- **Performance Monitoring**: Transaction tracking and performance analysis
-- **Breadcrumb Tracking**: Track user actions and application flow
-- **Context Management**: Add custom context to error reports
-- **Multi-Version Support**: Works with Java 1.8 through Java 21
-- **Enable/Disable Toggle**: Turn tracking on/off without code changes
-- **Error Resilience**: Application continues running even if Sentry is unavailable
-- **Sentry Client Access**: Direct access to Sentry API for advanced use cases
+-   **Error Tracking**: Automatic capture and reporting of exceptions
+-   **Performance Monitoring**: Transaction tracking and performance analysis
+-   **Breadcrumb Tracking**: Track user actions and application flow
+-   **Context Management**: Add custom context to error reports
+-   **Multi-Version Support**: Works with Java 1.8 through Java 21
+-   **Enable/Disable Toggle**: Turn tracking on/off without code changes
+-   **Error Resilience**: Application continues running even if Sentry is unavailable
+-   **Sentry Client Access**: Direct access to Sentry API for advanced use cases
 
 ### Key Features
 
@@ -90,7 +90,7 @@ repositories {
 dependencies {
     // BugTracker SDK
     implementation 'com.cubetiqs:bugtracker:1.0.1'
-    
+
     // Other dependencies...
 }
 ```
@@ -142,24 +142,24 @@ Add the following to your `pom.xml`:
 ```xml
 <project>
     <modelVersion>4.0.0</modelVersion>
-    
+
     <groupId>com.example</groupId>
     <artifactId>my-app</artifactId>
     <version>1.0.0</version>
-    
+
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    
+
     <repositories>
         <repository>
             <id>central</id>
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
     </repositories>
-    
+
     <dependencies>
         <!-- BugTracker SDK -->
         <dependency>
@@ -168,7 +168,7 @@ Add the following to your `pom.xml`:
             <version>1.0.1</version>
         </dependency>
     </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>
@@ -206,21 +206,23 @@ If you prefer to manage dependencies manually, follow these steps:
 Download the following JAR files:
 
 1. **BugTracker Shadow JAR** (recommended - includes all dependencies):
-   - Download: `bugtracker-1.0.1-all.jar` (4.6 MB)
-   - Contains: BugTracker + all dependencies (Sentry, SLF4J, Logback, etc.)
+
+    - Download: `bugtracker-1.0.1-all.jar` (4.6 MB)
+    - Contains: BugTracker + all dependencies (Sentry, SLF4J, Logback, etc.)
 
 2. **BugTracker Standard JAR** (requires manual dependency management):
-   - Download: `bugtracker-1.0.1.jar` (31 KB)
-   - Requires: Separate dependency JARs
+
+    - Download: `bugtracker-1.0.1.jar` (31 KB)
+    - Requires: Separate dependency JARs
 
 3. **Required Dependencies** (if using standard JAR):
-   - `sentry-7.10.0.jar` (or compatible version)
-   - `sentry-logback-7.10.0.jar`
-   - `sentry-jul-7.10.0.jar`
-   - `slf4j-api-1.7.36.jar`
-   - `logback-core-1.2.13.jar`
-   - `logback-classic-1.2.13.jar`
-   - `guava-30.1.1-jre.jar`
+    - `sentry-7.10.0.jar` (or compatible version)
+    - `sentry-logback-7.10.0.jar`
+    - `sentry-jul-7.10.0.jar`
+    - `slf4j-api-1.7.36.jar`
+    - `logback-core-1.2.13.jar`
+    - `logback-classic-1.2.13.jar`
+    - `guava-30.1.1-jre.jar`
 
 #### Step 2: Add JARs to Classpath
 
@@ -258,22 +260,24 @@ java -cp bugtracker-1.0.1-all.jar:. MyApp
 **Option D: IDE Setup**
 
 1. **IntelliJ IDEA**:
-   - File → Project Structure → Libraries
-   - Click `+` and select `Java`
-   - Navigate to the JAR file and select it
-   - Click OK
+
+    - File → Project Structure → Libraries
+    - Click `+` and select `Java`
+    - Navigate to the JAR file and select it
+    - Click OK
 
 2. **Eclipse**:
-   - Right-click project → Build Path → Configure Build Path
-   - Libraries tab → Add External JARs
-   - Select the JAR file
-   - Click OK
+
+    - Right-click project → Build Path → Configure Build Path
+    - Libraries tab → Add External JARs
+    - Select the JAR file
+    - Click OK
 
 3. **NetBeans**:
-   - Right-click project → Properties
-   - Libraries section → Add JAR/Folder
-   - Select the JAR file
-   - Click OK
+    - Right-click project → Properties
+    - Libraries section → Add JAR/Folder
+    - Select the JAR file
+    - Click OK
 
 #### Step 3: Verify Installation
 
@@ -285,7 +289,7 @@ import com.cubetiqs.sdk.bugtracker.BugTrackerClient;
 public class BugTrackerTest {
     public static void main(String[] args) {
         BugTrackerClient client = BugTrackerClient.builder()
-                .setDsn("https://key@sentry.io/project")
+                .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
                 .build();
         client.initialize();
         System.out.println("BugTracker loaded successfully!");
@@ -315,28 +319,27 @@ public class MyApp {
     public static void main(String[] args) {
         // Initialize with DSN from environment variable or system property
         BugTrackerClient tracker = BugTrackerClient.builder()
-            .setDsn("https://key@sentry.io/project")
+            .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
             .build();
-        
+
         tracker.initialize();
-        
+
         // Your application code...
     }
 }
 ```
 
 **Note**: The constructor is private. Always use `BugTrackerClient.builder()` to create instances.
-```
 
 2. **Set DSN via Environment or System Property**:
 
 ```bash
 # Using environment variable (recommended)
-export SENTRY_DSN="https://key@sentry.io/project"
+export SENTRY_DSN="https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7"
 java MyApp
 
 # Or using system property
-java -Dsentry.dsn="https://key@sentry.io/project" MyApp
+java -Dsentry.dsn="https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7" MyApp
 ```
 
 3. **Automatic User Detection**:
@@ -345,7 +348,7 @@ BugTracker automatically detects and sets the current system user when no user i
 
 ```java
 BugTrackerClient tracker = BugTrackerClient.builder()
-    .setDsn("https://key@sentry.io/project")
+    .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
     .build();
 
 tracker.initialize();
@@ -406,21 +409,21 @@ BugTrackerClient tracker = new BugTrackerClient.Builder()
 
 ### Configuration Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `DSN` | String | `$SENTRY_DSN` env var | Sentry project DSN |
-| `environment` | String | `"production"` | Environment name (production, staging, etc.) |
-| `release` | String | Auto-detected | Application release version |
-| `serverName` | String | Auto-detected | Server/hostname name |
-| `enabled` | Boolean | `true` | Enable/disable error tracking |
-| `ignoreErrors` | Boolean | `true` | Gracefully handle Sentry errors |
+| Option         | Type    | Default               | Description                                  |
+| -------------- | ------- | --------------------- | -------------------------------------------- |
+| `DSN`          | String  | `$SENTRY_DSN` env var | Sentry project DSN                           |
+| `environment`  | String  | `"production"`        | Environment name (production, staging, etc.) |
+| `release`      | String  | Auto-detected         | Application release version                  |
+| `serverName`   | String  | Auto-detected         | Server/hostname name                         |
+| `enabled`      | Boolean | `true`                | Enable/disable error tracking                |
+| `ignoreErrors` | Boolean | `true`                | Gracefully handle Sentry errors              |
 
 ### Enable/Disable Tracking
 
 ```java
 // Disable error tracking
 BugTrackerClient tracker = BugTrackerClient.builder()
-    .setDsn("https://key@sentry.io/project")
+    .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
     .setEnabled(false)
     .build();
 
@@ -436,7 +439,7 @@ tracker.captureMessage("msg"); // Does nothing
 ```java
 // Ignore errors - app continues even if Sentry fails
 BugTrackerClient tracker = BugTrackerClient.builder()
-    .setDsn("https://key@sentry.io/project")
+    .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
     .setIgnoreErrors(true) // default
     .build();
 
@@ -444,7 +447,7 @@ tracker.initialize();
 
 // Strict mode - errors propagate
 BugTrackerClient tracker2 = BugTrackerClient.builder()
-    .setDsn("https://key@sentry.io/project")
+    .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
     .setIgnoreErrors(false)
     .build();
 
@@ -514,11 +517,11 @@ tracker.configureScope(scope -> {
         .setId("123")
         .setUsername("john_doe")
         .setEmail("john@example.com"));
-    
+
     scope.setLevel("info");
     scope.setTag("component", "payment-service");
     scope.setTag("region", "us-west-2");
-    
+
     Map<String, Object> context = new HashMap<>();
     context.put("version", "1.0.0");
     context.put("api_endpoint", "https://api.example.com");
@@ -537,7 +540,7 @@ ITransaction transaction = tracker.startTransaction("database_query", "http.serv
 try {
     // Query database
     executeQuery();
-    
+
     // Create a span for detailed tracking
     ISpan span = transaction.startChild("db.query.prepare");
     try {
@@ -545,7 +548,7 @@ try {
     } finally {
         span.finish();
     }
-    
+
     transaction.setStatus("ok");
 } catch (Exception e) {
     transaction.setStatus("error");
@@ -598,7 +601,7 @@ Main SDK facade for error tracking.
 ```java
 // Using Builder pattern (recommended)
 BugTrackerClient tracker = BugTrackerClient.builder()
-    .setDsn("https://key@sentry.io/project")
+    .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
     .setEnvironment("production")
     .setRelease("1.0.0")
     .build();
@@ -663,13 +666,13 @@ tracker.configureScope(scope -> {
         .setId("user_id")
         .setUsername("username")
         .setEmail("email@example.com"));
-    
+
     // Set severity level
     scope.setLevel("info");
-    
+
     // Add tags
     scope.setTag("key", "value");
-    
+
     // Add custom contexts
     Map<String, Object> data = new HashMap<>();
     data.put("key", "value");
@@ -760,11 +763,11 @@ public class BasicExample {
     public static void main(String[] args) {
         // Initialize using builder
         BugTrackerClient tracker = BugTrackerClient.builder()
-            .setDsn("https://key@sentry.io/project")
+            .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
             .build();
-        
+
         tracker.initialize();
-        
+
         try {
             // Simulate error
             int result = 10 / 0;
@@ -772,7 +775,7 @@ public class BasicExample {
             // Capture exception
             tracker.captureException(e);
         }
-        
+
         // Ensure all events are sent
         tracker.flush();
     }
@@ -788,31 +791,31 @@ public class UserContextExample {
     public static void main(String[] args) {
         // Initialize using builder
         BugTrackerClient tracker = BugTrackerClient.builder()
-            .setDsn("https://key@sentry.io/project")
+            .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
             .build();
-        
+
         tracker.initialize();
-        
+
         // System user is automatically detected! Override it if needed:
         tracker.context().setUser("user_123", "john@example.com", "john_doe");
-        
+
         // Add metadata tags
         tracker.context().addTag("environment", "production");
         tracker.context().addTag("service", "payment-service");
-        
+
         // Track user action
         tracker.breadcrumbs().addBreadcrumb("User initiated payment");
-        
+
         try {
             // Process payment
             processPayment();
         } catch (Exception e) {
             tracker.captureException(e);
         }
-        
+
         tracker.flush();
     }
-    
+
     private static void processPayment() throws Exception {
         // Payment logic
     }
@@ -830,18 +833,18 @@ public class TransactionExample {
     public static void main(String[] args) {
         // Initialize using builder
         BugTrackerClient tracker = BugTrackerClient.builder()
-            .setDsn("https://key@sentry.io/project")
+            .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
             .setTracesSampleRate(1.0)
             .build();
-        
+
         tracker.initialize();
-        
+
         // Start transaction for API call
         ITransaction transaction = tracker.startTransaction(
             "api_request",
             "http.server"
         );
-        
+
         try {
             // Database query span
             ISpan dbSpan = transaction.startChild("db.query", "SELECT * FROM users");
@@ -850,7 +853,7 @@ public class TransactionExample {
             } finally {
                 dbSpan.finish();
             }
-            
+
             // API call span
             ISpan apiSpan = transaction.startChild("http.call", "GET /api/data");
             try {
@@ -858,25 +861,25 @@ public class TransactionExample {
             } finally {
                 apiSpan.finish();
             }
-            
+
             transaction.setStatus("ok");
             tracker.captureMessage("API request completed successfully");
-            
+
         } catch (Exception e) {
             transaction.setStatus("error");
             tracker.captureException(e);
         } finally {
             transaction.finish();
         }
-        
+
         tracker.flush();
     }
-    
+
     private static void queryDatabase() throws Exception {
         // Simulate database query
         Thread.sleep(100);
     }
-    
+
     private static void callExternalAPI() throws Exception {
         // Simulate API call
         Thread.sleep(200);
@@ -895,15 +898,15 @@ public class ConfigExample {
         boolean trackingEnabled = Boolean.parseBoolean(
             System.getenv().getOrDefault("ENABLE_ERROR_TRACKING", "true")
         );
-        
+
         // Initialize with configuration
         BugTrackerClient tracker = BugTrackerClient.builder()
-            .setDsn("https://key@sentry.io/project")
+            .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
             .setEnvironment("production")
             .setEnabled(trackingEnabled)
             .setIgnoreErrors(true)
             .build();
-        
+
         tracker.initialize();
         // All methods work regardless of enabled state
         try {
@@ -912,7 +915,7 @@ public class ConfigExample {
             // This is a no-op if tracking is disabled
             tracker.captureException(e);
         }
-        
+
         tracker.flush();
     }
 }
@@ -927,25 +930,25 @@ public class ErrorHandlingExample {
     public static void main(String[] args) {
         // Graceful mode - app continues even if Sentry fails
         BugTrackerClient tracker = BugTrackerClient.builder()
-            .setDsn("https://key@sentry.io/project")
+            .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
             .setIgnoreErrors(true)  // default
             .build();
-        
+
         tracker.initialize();
-        
+
         try {
             // Even if Sentry is down, these calls won't crash your app
             tracker.captureException(new Exception("Test error"));
             tracker.captureMessage("Test message");
             tracker.breadcrumbs().addBreadcrumb("Test breadcrumb");
-            
+
             // Your application continues running...
             System.out.println("Application running normally");
-            
+
         } catch (Exception e) {
             System.err.println("Unexpected error: " + e.getMessage());
         }
-        
+
         tracker.flush();
     }
 }
@@ -962,24 +965,24 @@ public class AdvancedAccessExample {
     public static void main(String[] args) {
         // Initialize using builder
         BugTrackerClient tracker = BugTrackerClient.builder()
-            .setDsn("https://key@sentry.io/project")
+            .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
             .build();
-        
+
         tracker.initialize();
-        
+
         // Get direct access to Sentry client
         IHub sentryClient = tracker.getSentryClient();
-        
+
         // Use advanced Sentry APIs
         Exception exception = new Exception("Advanced example");
-        
+
         // Create hint with custom data
         Hint hint = new Hint();
         hint.set("custom_field", "custom_value");
-        
+
         // Use Sentry API directly
         sentryClient.captureException(exception, hint);
-        
+
         tracker.flush();
     }
 }
@@ -993,40 +996,40 @@ import io.sentry.ITransaction;
 
 public class WebAppExample {
     private static final BugTrackerClient tracker;
-    
+
     static {
         tracker = BugTrackerClient.builder()
-            .setDsn("https://key@sentry.io/project")
+            .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
             .setTracesSampleRate(1.0)
             .build();
         tracker.initialize();
     }
-    
+
     public static void handleRequest(String userId, String endpoint) {
         // Start transaction for request
         ITransaction transaction = tracker.startTransaction(
             "http.request",
             "http.server"
         );
-        
+
         try {
             // Set request context
             tracker.context().addTag("endpoint", endpoint);
             tracker.context().addTag("method", "POST");
-            
+
             // Set user if available
             if (userId != null) {
                 tracker.context().addTag("user_id", userId);
             }
-            
+
             // Track breadcrumb
             tracker.breadcrumbs().addBreadcrumb("Received " + endpoint);
-            
+
             // Process request (your code here)
             processRequest(endpoint);
-            
+
             transaction.setStatus("ok");
-            
+
         } catch (Exception e) {
             transaction.setStatus("error");
             tracker.captureException(e);
@@ -1035,7 +1038,7 @@ public class WebAppExample {
             tracker.flush();
         }
     }
-    
+
     private static void processRequest(String endpoint) throws Exception {
         // Your request processing logic
     }
@@ -1070,6 +1073,7 @@ BugTrackerClient tracker = new BugTrackerClient("https://8fac51b682544aa8becdc8c
 **Solution**:
 
 1. Verify JAR is in classpath:
+
 ```bash
 # For Gradle
 ./gradlew dependencies | grep bugtracker
@@ -1079,6 +1083,7 @@ mvn dependency:tree | grep bugtracker
 ```
 
 2. If using manual JAR, ensure it's in the classpath:
+
 ```bash
 java -cp bugtracker-1.0.1-all.jar:. MyApp
 ```
@@ -1101,6 +1106,7 @@ implementation 'com.cubetiqs:bugtracker:1.0.1'
 
 1. Verify DSN is correct and active
 2. Call `flush()` before application exits:
+
 ```java
 tracker.flush();
 ```
@@ -1117,6 +1123,7 @@ tracker.flush();
 
 1. Use `ignoreErrors=true` (default) for better resilience
 2. Disable tracking in development if not needed:
+
 ```java
 .setEnabled(System.getenv("DEV_MODE") == null)
 ```
@@ -1132,6 +1139,7 @@ tracker.flush();
 
 1. Limit breadcrumb accumulation
 2. Clear scope regularly:
+
 ```java
 tracker.configureScope(scope -> {
     scope.clear();
@@ -1160,6 +1168,7 @@ tracker.configureScope(scope -> {
 ### Q: Can I disable tracking at runtime?
 
 **A**: Yes, use `setEnabled(false)` during initialization or environment variables:
+
 ```bash
 export ENABLE_TRACKING=false
 ```
@@ -1171,6 +1180,7 @@ export ENABLE_TRACKING=false
 ### Q: Can I use multiple BugTrackerClient instances?
 
 **A**: Yes, but it's not recommended. Use a single shared instance:
+
 ```java
 public class App {
     public static final BugTrackerClient tracker = new BugTrackerClient(...);
@@ -1180,6 +1190,7 @@ public class App {
 ### Q: How do I set environment-specific configuration?
 
 **A**: Use environment variables:
+
 ```java
 BugTrackerClient tracker = new BugTrackerClient.Builder()
     .setEnvironment(System.getenv("APP_ENV"))
@@ -1194,6 +1205,7 @@ BugTrackerClient tracker = new BugTrackerClient.Builder()
 ### Q: Can I send custom data to Sentry?
 
 **A**: Yes, use `configureScope()` or access the Sentry client directly:
+
 ```java
 tracker.configureScope(scope -> {
     scope.setTag("custom_tag", "value");
@@ -1205,7 +1217,7 @@ tracker.configureScope(scope -> {
 
 ### Q: How do I test if BugTracker is working?
 
-**A**: 
+**A**:
 
 ```java
 BugTrackerClient tracker = new BugTrackerClient("your-dsn");
@@ -1236,10 +1248,10 @@ System.out.println("Check your Sentry dashboard!");
 
 ## Getting Help
 
-- **Documentation**: See this file and code examples
-- **GitHub Issues**: [Report bugs or request features](https://github.com/CUBETIQ/bugtracker-java/issues)
-- **GitHub Discussions**: [Ask questions and discuss](https://github.com/CUBETIQ/bugtracker-java/discussions)
-- **Sentry Docs**: [Sentry Java SDK documentation](https://docs.sentry.io/platforms/java/)
+-   **Documentation**: See this file and code examples
+-   **GitHub Issues**: [Report bugs or request features](https://github.com/CUBETIQ/bugtracker-java/issues)
+-   **GitHub Discussions**: [Ask questions and discuss](https://github.com/CUBETIQ/bugtracker-java/discussions)
+-   **Sentry Docs**: [Sentry Java SDK documentation](https://docs.sentry.io/platforms/java/)
 
 ---
 
