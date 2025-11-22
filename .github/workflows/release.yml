@@ -41,10 +41,11 @@ jobs:
     - name: Generate changelog
       id: changelog
       run: |
+        CHANGELOG=$(git log $(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo HEAD)..HEAD --pretty=format:"- %h: %s (%an)" || git log --oneline -10)
         {
           echo 'CHANGELOG<<EOF'
-          git log $(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo HEAD)..HEAD --pretty=format:"- %h: %s (%an)" || git log --oneline -10
-          echo EOF
+          echo "$CHANGELOG"
+          echo 'EOF'
         } >> $GITHUB_OUTPUT
     
     - name: Create Release
