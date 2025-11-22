@@ -368,6 +368,60 @@ public class BugTrackerExamples {
         }
     }
 
+    /**
+     * Example 9: Advanced Sentry client access for custom operations
+     */
+    public static void advancedSentryClientAccess() {
+        BugTrackerClient tracker = BugTrackerClient.builder()
+                .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
+                .build();
+
+        tracker.initialize();
+
+        // Get direct access to the underlying Sentry client for advanced operations
+        io.sentry.IHub sentryHub = tracker.getSentryClient();
+
+        // Example: Push a new scope for isolation
+        sentryHub.pushScope();
+        try {
+            sentryHub.configureScope(scope -> {
+                scope.setTag("advanced_operation", "true");
+                scope.setTag("operation_type", "custom_sentry_access");
+                scope.setLevel(SentryLevel.WARNING);
+                scope.setExtra("handler", "advanced_sentry_client_access");
+            });
+            tracker.captureMessage("Message with advanced scope configuration", SentryLevel.WARNING);
+        } finally {
+            sentryHub.popScope();
+        }
+
+        // Example: Create a manual transaction (advanced performance monitoring)
+        io.sentry.ITransaction transaction = sentryHub.startTransaction("advanced-operation", "custom.operation");
+        if (transaction != null) {
+            // Create child spans
+            io.sentry.ISpan span1 = transaction.startChild("custom.step.1", "First processing step");
+            try {
+                Thread.sleep(30);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            span1.finish();
+
+            io.sentry.ISpan span2 = transaction.startChild("custom.step.2", "Second processing step");
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            span2.finish();
+
+            // Transaction automatically sends when finished
+            transaction.finish();
+        }
+
+        tracker.close();
+    }
+
     public static void main(String[] args) {
         System.out.println("BugTracker SDK Examples");
         System.out.println("======================\n");
@@ -383,6 +437,7 @@ public class BugTrackerExamples {
         System.out.println("6. Logging Integration");
         System.out.println("7. Exception Handling with Scope");
         System.out.println("8. Complete Application Example");
+        System.out.println("9. Advanced Sentry Client Access");
 
         System.out.println("\nTo run examples, uncomment the desired example in main()");
     }

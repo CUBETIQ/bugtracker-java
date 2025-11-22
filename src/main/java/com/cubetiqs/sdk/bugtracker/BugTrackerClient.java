@@ -138,6 +138,20 @@ public final class BugTrackerClient implements AutoCloseable {
         return config;
     }
 
+    /**
+     * Gets the underlying Sentry client instance.
+     * 
+     * This allows direct access to Sentry SDK functionality for advanced use cases
+     * where BugTracker wrapper methods are insufficient.
+     * 
+     * @return the Sentry IHub instance for direct Sentry API access
+     * @throws IllegalStateException if called before initialization
+     */
+    public io.sentry.IHub getSentryClient() {
+        ensureInitialized();
+        return Sentry.getCurrentHub();
+    }
+
     public BreadcrumbManager breadcrumbs() {
         return breadcrumbManager;
     }

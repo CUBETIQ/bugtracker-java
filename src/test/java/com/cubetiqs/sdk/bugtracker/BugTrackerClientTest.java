@@ -89,4 +89,43 @@ class BugTrackerClientTest {
         assertNotEquals(client.breadcrumbs(), client.context());
         assertNotEquals(client.breadcrumbs(), client.hooks());
     }
+
+    @Test
+    @DisplayName("Should provide access to underlying Sentry client")
+    void testGetSentryClient() {
+        client.initialize();
+        assertNotNull(client.getSentryClient());
+    }
+
+    @Test
+    @DisplayName("Should initialize automatically when getting Sentry client")
+    void testGetSentryClientInitializesClient() {
+        // Create new client without initializing
+        BugTrackerClient newClient = BugTrackerClient.builder()
+                .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
+                .build();
+        
+        // getSentryClient should auto-initialize
+        assertNotNull(newClient.getSentryClient());
+        assertTrue(newClient.isInitialized());
+    }
+
+    @Test
+    @DisplayName("Should allow advanced Sentry operations via client")
+    void testSentryClientAdvancedOperations() {
+        client.initialize();
+        io.sentry.IHub hub = client.getSentryClient();
+        
+        // Verify we can access Sentry hub methods
+        assertNotNull(hub);
+        // Can perform operations like: hub.getClient(), hub.pushScope(), etc.
+    }
+
+    @Test
+    @DisplayName("Should capture message via Sentry client")
+    void testCaptureMessageViaSentryClient() {
+        client.initialize();
+        io.sentry.IHub hub = client.getSentryClient();
+        assertDoesNotThrow(() -> hub.captureMessage("Test message via Sentry client"));
+    }
 }
