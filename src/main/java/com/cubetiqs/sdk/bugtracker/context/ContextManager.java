@@ -9,21 +9,71 @@ import java.util.Objects;
 /**
  * Manages context information for events (users, tags, extras, and custom data).
  * Provides a fluent API for setting context information.
+ * 
+ * Auto-detects system user if not explicitly set.
  */
 public class ContextManager {
     private final BugTrackerClient client;
     private final Map<String, String> tags;
     private final Map<String, Object> extras;
     private User currentUser;
+    private boolean userAutoDetected = false;
 
     public ContextManager(BugTrackerClient client) {
         this.client = Objects.requireNonNull(client, "client");
         this.tags = new HashMap<>();
         this.extras = new HashMap<>();
+        // Auto-detect system user on initialization
+        this.currentUser = detectSystemUser();
+        if (this.currentUser != null) {
+            userAutoDetected = true;
+            client.setUser(this.currentUser);
+        }
+    }
+
+    /**
+     * Detects the current system user from environment and system properties.
+     * Tries to get user information from:
+     * 1. USER environment variable
+     * 2. USERNAME environment variable (Windows)
+     * 3. user.name system property
+     * 
+     * @return User object with detected username, or null if detection fails
+     */
+    private static User detectSystemUser() {
+        try {
+            String username = null;
+            
+            // Try USER environment variable (Unix/Linux/Mac)
+            if (username == null) {
+                username = System.getenv("USER");
+            }
+            
+            // Try USERNAME environment variable (Windows)
+            if (username == null) {
+                username = System.getenv("USERNAME");
+            }
+            
+            // Try user.name system property
+            if (username == null) {
+                username = System.getProperty("user.name");
+            }
+            
+            if (username != null && !username.isEmpty() && !"{{auto}}".equals(username)) {
+                User user = new User();
+                user.setUsername(username);
+                user.setId(username); // Use username as ID when auto-detected
+                return user;
+            }
+        } catch (Exception e) {
+            // Silently ignore detection failures
+        }
+        return null;
     }
 
     public ContextManager setUser(User user) {
         this.currentUser = Objects.requireNonNull(user, "user");
+        this.userAutoDetected = false;
         client.setUser(user);
         return this;
     }
@@ -89,6 +139,15 @@ public class ContextManager {
 
     public User getCurrentUser() {
         return currentUser;
+    }
+
+    /**
+     * Checks if the current user was auto-detected from the system.
+     * 
+     * @return true if user was auto-detected, false if manually set or null
+     */
+    public boolean isUserAutoDetected() {
+        return userAutoDetected;
     }
 
     public Map<String, String> getTags() {

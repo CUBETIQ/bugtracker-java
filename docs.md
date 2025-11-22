@@ -284,7 +284,10 @@ import com.cubetiqs.sdk.bugtracker.BugTrackerClient;
 
 public class BugTrackerTest {
     public static void main(String[] args) {
-        BugTrackerClient client = new BugTrackerClient();
+        BugTrackerClient client = BugTrackerClient.builder()
+                .setDsn("https://key@sentry.io/project")
+                .build();
+        client.initialize();
         System.out.println("BugTracker loaded successfully!");
     }
 }
@@ -303,35 +306,60 @@ java -cp bugtracker-1.0.1-all.jar:. BugTrackerTest
 
 ### Basic Setup (5 minutes)
 
-1. **Initialize BugTracker** with your Sentry DSN:
+1. **Initialize BugTracker** using the builder:
 
 ```java
 import com.cubetiqs.sdk.bugtracker.BugTrackerClient;
 
 public class MyApp {
     public static void main(String[] args) {
-        // Initialize with DSN from environment variable
-        BugTrackerClient tracker = new BugTrackerClient("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7");
+        // Initialize with DSN from environment variable or system property
+        BugTrackerClient tracker = BugTrackerClient.builder()
+            .setDsn("https://key@sentry.io/project")
+            .build();
+        
+        tracker.initialize();
         
         // Your application code...
     }
 }
 ```
 
-2. **Set Environment from System Property**:
-
-```bash
-java -Dsentry.dsn="https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7" MyApp
+**Note**: The constructor is private. Always use `BugTrackerClient.builder()` to create instances.
 ```
 
-Or set environment variable:
+2. **Set DSN via Environment or System Property**:
 
 ```bash
-export SENTRY_DSN="https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7"
+# Using environment variable (recommended)
+export SENTRY_DSN="https://key@sentry.io/project"
 java MyApp
+
+# Or using system property
+java -Dsentry.dsn="https://key@sentry.io/project" MyApp
 ```
 
-3. **Capture Exceptions**:
+3. **Automatic User Detection**:
+
+BugTracker automatically detects and sets the current system user when no user is explicitly set:
+
+```java
+BugTrackerClient tracker = BugTrackerClient.builder()
+    .setDsn("https://key@sentry.io/project")
+    .build();
+
+tracker.initialize();
+
+// System user is automatically detected from:
+// - USER environment variable (Unix/Linux/Mac)
+// - USERNAME environment variable (Windows)
+// - user.name system property
+
+// You can still override it:
+tracker.context().setUser("user_123", "user@example.com", "john_doe");
+```
+
+4. **Capture Exceptions**:
 
 ```java
 try {
@@ -391,9 +419,12 @@ BugTrackerClient tracker = new BugTrackerClient.Builder()
 
 ```java
 // Disable error tracking
-BugTrackerClient tracker = new BugTrackerClient.Builder()
+BugTrackerClient tracker = BugTrackerClient.builder()
+    .setDsn("https://key@sentry.io/project")
     .setEnabled(false)
     .build();
+
+tracker.initialize();
 
 // All methods become no-ops when disabled
 tracker.captureException(e); // Does nothing
@@ -404,14 +435,20 @@ tracker.captureMessage("msg"); // Does nothing
 
 ```java
 // Ignore errors - app continues even if Sentry fails
-BugTrackerClient tracker = new BugTrackerClient.Builder()
+BugTrackerClient tracker = BugTrackerClient.builder()
+    .setDsn("https://key@sentry.io/project")
     .setIgnoreErrors(true) // default
     .build();
 
+tracker.initialize();
+
 // Strict mode - errors propagate
-BugTrackerClient tracker = new BugTrackerClient.Builder()
+BugTrackerClient tracker2 = BugTrackerClient.builder()
+    .setDsn("https://key@sentry.io/project")
     .setIgnoreErrors(false)
     .build();
+
+tracker2.initialize();
 ```
 
 ### Setting DSN
@@ -559,18 +596,21 @@ Main SDK facade for error tracking.
 #### Initialization
 
 ```java
-// Basic initialization (uses environment variable for DSN)
-BugTrackerClient tracker = new BugTrackerClient();
-
-// With explicit DSN
-BugTrackerClient tracker = new BugTrackerClient("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7");
-
-// Using Builder pattern
-BugTrackerClient tracker = new BugTrackerClient.Builder()
-    .setDSN("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
+// Using Builder pattern (recommended)
+BugTrackerClient tracker = BugTrackerClient.builder()
+    .setDsn("https://key@sentry.io/project")
     .setEnvironment("production")
     .setRelease("1.0.0")
     .build();
+
+tracker.initialize();
+
+// With auto-detected DSN from environment variable
+BugTrackerClient tracker2 = BugTrackerClient.builder()
+    .setEnvironment("production")
+    .build();
+
+tracker2.initialize(); // Uses SENTRY_DSN environment variable
 ```
 
 #### Exception Tracking
@@ -718,10 +758,12 @@ import com.cubetiqs.sdk.bugtracker.BugTrackerClient;
 
 public class BasicExample {
     public static void main(String[] args) {
-        // Initialize
-        BugTrackerClient tracker = new BugTrackerClient(
-            "https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7"
-        );
+        // Initialize using builder
+        BugTrackerClient tracker = BugTrackerClient.builder()
+            .setDsn("https://key@sentry.io/project")
+            .build();
+        
+        tracker.initialize();
         
         try {
             // Simulate error
@@ -741,29 +783,25 @@ public class BasicExample {
 
 ```java
 import com.cubetiqs.sdk.bugtracker.BugTrackerClient;
-import io.sentry.User;
 
 public class UserContextExample {
     public static void main(String[] args) {
-        BugTrackerClient tracker = new BugTrackerClient(
-            "https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7"
-        );
+        // Initialize using builder
+        BugTrackerClient tracker = BugTrackerClient.builder()
+            .setDsn("https://key@sentry.io/project")
+            .build();
         
-        // Set user information
-        tracker.configureScope(scope -> {
-            scope.setUser(new User()
-                .setId("user_123")
-                .setUsername("john_doe")
-                .setEmail("john@example.com")
-            );
-            
-            // Add metadata tags
-            scope.setTag("environment", "production");
-            scope.setTag("service", "payment-service");
-        });
+        tracker.initialize();
+        
+        // System user is automatically detected! Override it if needed:
+        tracker.context().setUser("user_123", "john@example.com", "john_doe");
+        
+        // Add metadata tags
+        tracker.context().addTag("environment", "production");
+        tracker.context().addTag("service", "payment-service");
         
         // Track user action
-        tracker.addBreadcrumb("user_action", "User initiated payment", "info");
+        tracker.breadcrumbs().addBreadcrumb("User initiated payment");
         
         try {
             // Process payment
@@ -790,9 +828,13 @@ import io.sentry.ISpan;
 
 public class TransactionExample {
     public static void main(String[] args) {
-        BugTrackerClient tracker = new BugTrackerClient(
-            "https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7"
-        );
+        // Initialize using builder
+        BugTrackerClient tracker = BugTrackerClient.builder()
+            .setDsn("https://key@sentry.io/project")
+            .setTracesSampleRate(1.0)
+            .build();
+        
+        tracker.initialize();
         
         // Start transaction for API call
         ITransaction transaction = tracker.startTransaction(
@@ -802,7 +844,7 @@ public class TransactionExample {
         
         try {
             // Database query span
-            ISpan dbSpan = transaction.startChild("db.query");
+            ISpan dbSpan = transaction.startChild("db.query", "SELECT * FROM users");
             try {
                 queryDatabase();
             } finally {
@@ -810,7 +852,7 @@ public class TransactionExample {
             }
             
             // API call span
-            ISpan apiSpan = transaction.startChild("http.call");
+            ISpan apiSpan = transaction.startChild("http.call", "GET /api/data");
             try {
                 callExternalAPI();
             } finally {
@@ -855,13 +897,14 @@ public class ConfigExample {
         );
         
         // Initialize with configuration
-        BugTrackerClient tracker = new BugTrackerClient.Builder()
-            .setDSN("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
+        BugTrackerClient tracker = BugTrackerClient.builder()
+            .setDsn("https://key@sentry.io/project")
             .setEnvironment("production")
             .setEnabled(trackingEnabled)
             .setIgnoreErrors(true)
             .build();
         
+        tracker.initialize();
         // All methods work regardless of enabled state
         try {
             int result = 10 / 0;
@@ -883,16 +926,18 @@ import com.cubetiqs.sdk.bugtracker.BugTrackerClient;
 public class ErrorHandlingExample {
     public static void main(String[] args) {
         // Graceful mode - app continues even if Sentry fails
-        BugTrackerClient tracker = new BugTrackerClient.Builder()
-            .setDSN("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
+        BugTrackerClient tracker = BugTrackerClient.builder()
+            .setDsn("https://key@sentry.io/project")
             .setIgnoreErrors(true)  // default
             .build();
+        
+        tracker.initialize();
         
         try {
             // Even if Sentry is down, these calls won't crash your app
             tracker.captureException(new Exception("Test error"));
             tracker.captureMessage("Test message");
-            tracker.addBreadcrumb("test", "Test breadcrumb", "info");
+            tracker.breadcrumbs().addBreadcrumb("Test breadcrumb");
             
             // Your application continues running...
             System.out.println("Application running normally");
@@ -915,9 +960,12 @@ import io.sentry.Hint;
 
 public class AdvancedAccessExample {
     public static void main(String[] args) {
-        BugTrackerClient tracker = new BugTrackerClient(
-            "https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7"
-        );
+        // Initialize using builder
+        BugTrackerClient tracker = BugTrackerClient.builder()
+            .setDsn("https://key@sentry.io/project")
+            .build();
+        
+        tracker.initialize();
         
         // Get direct access to Sentry client
         IHub sentryClient = tracker.getSentryClient();
@@ -942,13 +990,17 @@ public class AdvancedAccessExample {
 ```java
 import com.cubetiqs.sdk.bugtracker.BugTrackerClient;
 import io.sentry.ITransaction;
-import java.util.HashMap;
-import java.util.Map;
 
 public class WebAppExample {
-    private static final BugTrackerClient tracker = new BugTrackerClient(
-        "https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7"
-    );
+    private static final BugTrackerClient tracker;
+    
+    static {
+        tracker = BugTrackerClient.builder()
+            .setDsn("https://key@sentry.io/project")
+            .setTracesSampleRate(1.0)
+            .build();
+        tracker.initialize();
+    }
     
     public static void handleRequest(String userId, String endpoint) {
         // Start transaction for request
@@ -959,21 +1011,16 @@ public class WebAppExample {
         
         try {
             // Set request context
-            tracker.configureScope(scope -> {
-                Map<String, Object> request = new HashMap<>();
-                request.put("method", "POST");
-                request.put("url", endpoint);
-                scope.setContexts("request", request);
-                
-                // Set user if available
-                if (userId != null) {
-                    scope.setTag("user_id", userId);
-                }
-            });
+            tracker.context().addTag("endpoint", endpoint);
+            tracker.context().addTag("method", "POST");
+            
+            // Set user if available
+            if (userId != null) {
+                tracker.context().addTag("user_id", userId);
+            }
             
             // Track breadcrumb
-            tracker.addBreadcrumb("http_request", 
-                "Received " + endpoint, "info");
+            tracker.breadcrumbs().addBreadcrumb("Received " + endpoint);
             
             // Process request (your code here)
             processRequest(endpoint);
