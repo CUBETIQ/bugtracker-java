@@ -37,6 +37,9 @@ public final class BugTrackerClient implements AutoCloseable {
     }
 
     public void initialize() {
+        if (!config.isEnabled()) {
+            return;  // Skip initialization if disabled
+        }
         if (Sentry.isEnabled()) {
             return;
         }
@@ -44,27 +47,60 @@ public final class BugTrackerClient implements AutoCloseable {
             if (Sentry.isEnabled()) {
                 return;
             }
-            Sentry.init(this::configureOptions);
+            try {
+                Sentry.init(this::configureOptions);
+            } catch (Exception e) {
+                if (config.isIgnoreErrors()) {
+                    // Log but don't throw to prevent app crash
+                    if (config.isDebugEnabled()) {
+                        System.err.println("BugTracker initialization failed (ignoring): " + e.getMessage());
+                    }
+                } else {
+                    throw e;
+                }
+            }
         }
     }
 
     public boolean isInitialized() {
-        return Sentry.isEnabled();
+        return config.isEnabled() && Sentry.isEnabled();
     }
 
     public void captureException(Throwable exception) {
-        ensureInitialized();
-        Sentry.captureException(exception);
+        if (!config.isEnabled()) {
+            return;  // No-op when disabled
+        }
+        try {
+            ensureInitialized();
+            Sentry.captureException(exception);
+        } catch (Exception e) {
+            if (config.isIgnoreErrors() && config.isDebugEnabled()) {
+                System.err.println("BugTracker captureException failed: " + e.getMessage());
+            } else if (!config.isIgnoreErrors()) {
+                throw e;
+            }
+        }
     }
 
     public void captureException(Throwable exception, Consumer<IScope> scopeConfigurator) {
-        ensureInitialized();
-        if (scopeConfigurator == null) {
-            captureException(exception);
-            return;
+        if (!config.isEnabled()) {
+            return;  // No-op when disabled
         }
-        Sentry.withScope(scope -> scopeConfigurator.accept(scope));
-        Sentry.captureException(exception);
+        try {
+            ensureInitialized();
+            if (scopeConfigurator == null) {
+                captureException(exception);
+                return;
+            }
+            Sentry.withScope(scope -> scopeConfigurator.accept(scope));
+            Sentry.captureException(exception);
+        } catch (Exception e) {
+            if (config.isIgnoreErrors() && config.isDebugEnabled()) {
+                System.err.println("BugTracker captureException failed: " + e.getMessage());
+            } else if (!config.isIgnoreErrors()) {
+                throw e;
+            }
+        }
     }
 
     public void captureMessage(String message) {
@@ -72,8 +108,19 @@ public final class BugTrackerClient implements AutoCloseable {
     }
 
     public void captureMessage(String message, SentryLevel level) {
-        ensureInitialized();
-        Sentry.captureMessage(message, level);
+        if (!config.isEnabled()) {
+            return;  // No-op when disabled
+        }
+        try {
+            ensureInitialized();
+            Sentry.captureMessage(message, level);
+        } catch (Exception e) {
+            if (config.isIgnoreErrors() && config.isDebugEnabled()) {
+                System.err.println("BugTracker captureMessage failed: " + e.getMessage());
+            } else if (!config.isIgnoreErrors()) {
+                throw e;
+            }
+        }
     }
 
     public void addBreadcrumb(String message) {
@@ -81,24 +128,46 @@ public final class BugTrackerClient implements AutoCloseable {
     }
 
     public void addBreadcrumb(String message, SentryLevel level, Map<String, String> data) {
-        ensureInitialized();
-        Breadcrumb breadcrumb = new Breadcrumb();
-        breadcrumb.setMessage(message);
-        breadcrumb.setLevel(level);
-        if (data != null) {
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                breadcrumb.setData(entry.getKey(), entry.getValue());
+        if (!config.isEnabled()) {
+            return;  // No-op when disabled
+        }
+        try {
+            ensureInitialized();
+            Breadcrumb breadcrumb = new Breadcrumb();
+            breadcrumb.setMessage(message);
+            breadcrumb.setLevel(level);
+            if (data != null) {
+                for (Map.Entry<String, String> entry : data.entrySet()) {
+                    breadcrumb.setData(entry.getKey(), entry.getValue());
+                }
+            }
+            Sentry.addBreadcrumb(breadcrumb);
+        } catch (Exception e) {
+            if (config.isIgnoreErrors() && config.isDebugEnabled()) {
+                System.err.println("BugTracker addBreadcrumb failed: " + e.getMessage());
+            } else if (!config.isIgnoreErrors()) {
+                throw e;
             }
         }
-        Sentry.addBreadcrumb(breadcrumb);
     }
 
     public void configureScope(Consumer<IScope> scopeConfigurator) {
-        ensureInitialized();
-        if (scopeConfigurator == null) {
-            return;
+        if (!config.isEnabled()) {
+            return;  // No-op when disabled
         }
-        Sentry.configureScope(scopeConfigurator::accept);
+        try {
+            ensureInitialized();
+            if (scopeConfigurator == null) {
+                return;
+            }
+            Sentry.configureScope(scopeConfigurator::accept);
+        } catch (Exception e) {
+            if (config.isIgnoreErrors() && config.isDebugEnabled()) {
+                System.err.println("BugTracker configureScope failed: " + e.getMessage());
+            } else if (!config.isIgnoreErrors()) {
+                throw e;
+            }
+        }
     }
 
     public void setTag(String key, String value) {
@@ -118,11 +187,22 @@ public final class BugTrackerClient implements AutoCloseable {
     }
 
     public void flush(Duration timeout) {
-        ensureInitialized();
-        if (timeout == null || timeout.isNegative()) {
-            timeout = DEFAULT_FLUSH_TIMEOUT;
+        if (!config.isEnabled()) {
+            return;  // No-op when disabled
         }
-        Sentry.flush(timeout.toMillis());
+        try {
+            ensureInitialized();
+            if (timeout == null || timeout.isNegative()) {
+                timeout = DEFAULT_FLUSH_TIMEOUT;
+            }
+            Sentry.flush(timeout.toMillis());
+        } catch (Exception e) {
+            if (config.isIgnoreErrors() && config.isDebugEnabled()) {
+                System.err.println("BugTracker flush failed: " + e.getMessage());
+            } else if (!config.isIgnoreErrors()) {
+                throw e;
+            }
+        }
     }
 
     @Override
@@ -225,6 +305,34 @@ public final class BugTrackerClient implements AutoCloseable {
 
         public Builder setDebugEnabled(boolean debugEnabled) {
             configBuilder.setDebugEnabled(debugEnabled);
+            return this;
+        }
+
+        /**
+         * Enable or disable BugTracker error tracking.
+         * When disabled, all capture methods become no-ops without throwing errors.
+         * 
+         * Default: true (enabled)
+         * 
+         * @param enabled true to enable error tracking, false to disable
+         * @return this builder for chaining
+         */
+        public Builder setEnabled(boolean enabled) {
+            configBuilder.setEnabled(enabled);
+            return this;
+        }
+
+        /**
+         * Enable or disable error suppression when Sentry is unavailable.
+         * When enabled (true), initialization failures won't crash the application.
+         * 
+         * Default: true (ignore errors)
+         * 
+         * @param ignoreErrors true to ignore Sentry initialization errors, false to propagate them
+         * @return this builder for chaining
+         */
+        public Builder setIgnoreErrors(boolean ignoreErrors) {
+            configBuilder.setIgnoreErrors(ignoreErrors);
             return this;
         }
 

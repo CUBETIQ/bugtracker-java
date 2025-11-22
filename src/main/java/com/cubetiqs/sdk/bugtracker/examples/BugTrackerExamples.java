@@ -422,6 +422,74 @@ public class BugTrackerExamples {
         tracker.close();
     }
 
+    /**
+     * Example 10: Enable/disable and error handling configuration
+     */
+    public static void enableDisableAndErrorHandling() {
+        // Example 1: Completely disable BugTracker
+        System.out.println("Example: Disabled BugTracker");
+        BugTrackerClient disabledTracker = BugTrackerClient.builder()
+                .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
+                .setEnabled(false)  // Disable tracking
+                .build();
+
+        // All operations are no-ops when disabled
+        disabledTracker.captureMessage("This won't be sent");
+        disabledTracker.captureException(new RuntimeException("This error is not tracked"));
+        disabledTracker.close();
+
+        // Example 2: Graceful error handling with ignore errors enabled (default)
+        System.out.println("\nExample: Resilient BugTracker (ignore errors)");
+        BugTrackerClient resilientTracker = BugTrackerClient.builder()
+                .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
+                .setEnabled(true)
+                .setIgnoreErrors(true)  // Don't crash if Sentry fails
+                .setDebugEnabled(false)
+                .build();
+
+        // If Sentry fails, your application continues running
+        resilientTracker.initialize();
+        resilientTracker.captureMessage("Safe message - app won't crash if Sentry is down");
+        resilientTracker.close();
+
+        // Example 3: Strict mode - propagate errors
+        System.out.println("\nExample: Strict BugTracker (propagate errors)");
+        BugTrackerClient strictTracker = BugTrackerClient.builder()
+                .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
+                .setEnabled(true)
+                .setIgnoreErrors(false)  // Propagate errors
+                .setDebugEnabled(true)
+                .build();
+
+        try {
+            strictTracker.initialize();
+            strictTracker.captureMessage("Message in strict mode");
+        } catch (Exception e) {
+            logger.severe("Sentry initialization failed: " + e.getMessage());
+        }
+        strictTracker.close();
+
+        // Example 4: Dynamic enable/disable based on configuration
+        System.out.println("\nExample: Dynamic enable/disable");
+        String bugTrackerEnabled = System.getenv("BUGTRACKER_ENABLED");
+        boolean isEnabled = bugTrackerEnabled == null || !bugTrackerEnabled.equals("false");
+
+        BugTrackerClient dynamicTracker = BugTrackerClient.builder()
+                .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
+                .setEnabled(isEnabled)  // Based on environment variable
+                .setIgnoreErrors(true)
+                .setEnvironment(System.getenv("ENVIRONMENT"))
+                .build();
+
+        dynamicTracker.initialize();
+        if (dynamicTracker.getConfig().isEnabled()) {
+            dynamicTracker.captureMessage("BugTracker is enabled");
+        } else {
+            System.out.println("BugTracker is disabled");
+        }
+        dynamicTracker.close();
+    }
+
     public static void main(String[] args) {
         System.out.println("BugTracker SDK Examples");
         System.out.println("======================\n");
@@ -438,6 +506,7 @@ public class BugTrackerExamples {
         System.out.println("7. Exception Handling with Scope");
         System.out.println("8. Complete Application Example");
         System.out.println("9. Advanced Sentry Client Access");
+        System.out.println("10. Enable/Disable and Error Handling");
 
         System.out.println("\nTo run examples, uncomment the desired example in main()");
     }

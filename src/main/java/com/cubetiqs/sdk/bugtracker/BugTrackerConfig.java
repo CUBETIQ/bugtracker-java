@@ -24,6 +24,8 @@ public final class BugTrackerConfig {
     private final Optional<Double> sampleRate;
     private final Optional<Double> tracesSampleRate;
     private final boolean debugEnabled;
+    private final boolean enabled;
+    private final boolean ignoreErrors;
     private final Map<String, String> defaultTags;
 
     private BugTrackerConfig(Builder builder) {
@@ -34,6 +36,8 @@ public final class BugTrackerConfig {
         this.sampleRate = Optional.ofNullable(builder.sampleRate);
         this.tracesSampleRate = Optional.ofNullable(builder.tracesSampleRate);
         this.debugEnabled = builder.debugEnabled;
+        this.enabled = builder.enabled;
+        this.ignoreErrors = builder.ignoreErrors;
         this.defaultTags = Collections.unmodifiableMap(new LinkedHashMap<>(builder.defaultTags));
     }
 
@@ -67,6 +71,14 @@ public final class BugTrackerConfig {
 
     public boolean isDebugEnabled() {
         return debugEnabled;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public boolean isIgnoreErrors() {
+        return ignoreErrors;
     }
 
     public Map<String, String> getDefaultTags() {
@@ -128,6 +140,8 @@ public final class BugTrackerConfig {
         private Double sampleRate;
         private Double tracesSampleRate;
         private boolean debugEnabled;
+        private boolean enabled = true;  // Enabled by default
+        private boolean ignoreErrors = true;  // Ignore errors by default to avoid crashes
         private final Map<String, String> defaultTags = new LinkedHashMap<>();
 
         private Builder() {
@@ -165,6 +179,34 @@ public final class BugTrackerConfig {
 
         public Builder setDebugEnabled(boolean debugEnabled) {
             this.debugEnabled = debugEnabled;
+            return this;
+        }
+
+        /**
+         * Enable or disable BugTracker error tracking.
+         * When disabled, all capture methods become no-ops without throwing errors.
+         * 
+         * Default: true (enabled)
+         * 
+         * @param enabled true to enable error tracking, false to disable
+         * @return this builder for chaining
+         */
+        public Builder setEnabled(boolean enabled) {
+            this.enabled = enabled;
+            return this;
+        }
+
+        /**
+         * Enable or disable error suppression when Sentry is unavailable.
+         * When enabled (true), initialization failures won't crash the application.
+         * 
+         * Default: true (ignore errors)
+         * 
+         * @param ignoreErrors true to ignore Sentry initialization errors, false to propagate them
+         * @return this builder for chaining
+         */
+        public Builder setIgnoreErrors(boolean ignoreErrors) {
+            this.ignoreErrors = ignoreErrors;
             return this;
         }
 

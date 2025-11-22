@@ -41,8 +41,6 @@ Or with Maven `pom.xml`:
 </dependency>
 ```
 
-> **Note:** For detailed Java version compatibility information, see [JAVA_COMPATIBILITY.md](./JAVA_COMPATIBILITY.md)
-
 ## Quick Start
 
 ### Basic Initialization
