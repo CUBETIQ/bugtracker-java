@@ -311,7 +311,7 @@ import com.cubetiqs.sdk.bugtracker.BugTrackerClient;
 public class MyApp {
     public static void main(String[] args) {
         // Initialize with DSN from environment variable
-        BugTrackerClient tracker = new BugTrackerClient("https://key@sentry.io/project");
+        BugTrackerClient tracker = new BugTrackerClient("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7");
         
         // Your application code...
     }
@@ -321,13 +321,13 @@ public class MyApp {
 2. **Set Environment from System Property**:
 
 ```bash
-java -Dsentry.dsn="https://key@sentry.io/project" MyApp
+java -Dsentry.dsn="https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7" MyApp
 ```
 
 Or set environment variable:
 
 ```bash
-export SENTRY_DSN="https://key@sentry.io/project"
+export SENTRY_DSN="https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7"
 java MyApp
 ```
 
@@ -367,7 +367,7 @@ Use the builder pattern for advanced configuration:
 
 ```java
 BugTrackerClient tracker = new BugTrackerClient.Builder()
-    .setDSN("https://key@sentry.io/project")
+    .setDSN("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
     .setEnvironment("production")
     .setRelease("1.0.0")
     .setServerName("app-server-1")
@@ -418,11 +418,11 @@ BugTrackerClient tracker = new BugTrackerClient.Builder()
 
 ```java
 // Option 1: Constructor
-BugTrackerClient tracker = new BugTrackerClient("https://key@sentry.io/project");
+BugTrackerClient tracker = new BugTrackerClient("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7");
 
 // Option 2: Builder
 BugTrackerClient tracker = new BugTrackerClient.Builder()
-    .setDSN("https://key@sentry.io/project")
+    .setDSN("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
     .build();
 
 // Option 3: Environment variable (SENTRY_DSN)
@@ -563,11 +563,11 @@ Main SDK facade for error tracking.
 BugTrackerClient tracker = new BugTrackerClient();
 
 // With explicit DSN
-BugTrackerClient tracker = new BugTrackerClient("https://key@sentry.io/project");
+BugTrackerClient tracker = new BugTrackerClient("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7");
 
 // Using Builder pattern
 BugTrackerClient tracker = new BugTrackerClient.Builder()
-    .setDSN("https://key@sentry.io/project")
+    .setDSN("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
     .setEnvironment("production")
     .setRelease("1.0.0")
     .build();
@@ -698,7 +698,7 @@ boolean ignoreErrors = config.isIgnoreErrors();
 
 // Builder
 BugTrackerConfig config = new BugTrackerConfig.Builder()
-    .setDSN("https://key@sentry.io/project")
+    .setDSN("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
     .setEnvironment("production")
     .setRelease("1.0.0")
     .setServerName("server-1")
@@ -720,7 +720,7 @@ public class BasicExample {
     public static void main(String[] args) {
         // Initialize
         BugTrackerClient tracker = new BugTrackerClient(
-            "https://key@sentry.io/project"
+            "https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7"
         );
         
         try {
@@ -746,7 +746,7 @@ import io.sentry.User;
 public class UserContextExample {
     public static void main(String[] args) {
         BugTrackerClient tracker = new BugTrackerClient(
-            "https://key@sentry.io/project"
+            "https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7"
         );
         
         // Set user information
@@ -791,7 +791,7 @@ import io.sentry.ISpan;
 public class TransactionExample {
     public static void main(String[] args) {
         BugTrackerClient tracker = new BugTrackerClient(
-            "https://key@sentry.io/project"
+            "https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7"
         );
         
         // Start transaction for API call
@@ -856,7 +856,7 @@ public class ConfigExample {
         
         // Initialize with configuration
         BugTrackerClient tracker = new BugTrackerClient.Builder()
-            .setDSN("https://key@sentry.io/project")
+            .setDSN("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
             .setEnvironment("production")
             .setEnabled(trackingEnabled)
             .setIgnoreErrors(true)
@@ -884,7 +884,7 @@ public class ErrorHandlingExample {
     public static void main(String[] args) {
         // Graceful mode - app continues even if Sentry fails
         BugTrackerClient tracker = new BugTrackerClient.Builder()
-            .setDSN("https://key@sentry.io/project")
+            .setDSN("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
             .setIgnoreErrors(true)  // default
             .build();
         
@@ -916,7 +916,7 @@ import io.sentry.Hint;
 public class AdvancedAccessExample {
     public static void main(String[] args) {
         BugTrackerClient tracker = new BugTrackerClient(
-            "https://key@sentry.io/project"
+            "https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7"
         );
         
         // Get direct access to Sentry client
@@ -947,7 +947,7 @@ import java.util.Map;
 
 public class WebAppExample {
     private static final BugTrackerClient tracker = new BugTrackerClient(
-        "https://key@sentry.io/project"
+        "https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7"
     );
     
     public static void handleRequest(String userId, String endpoint) {
@@ -1007,13 +1007,13 @@ public class WebAppExample {
 
 ```bash
 # Set environment variable
-export SENTRY_DSN="https://key@sentry.io/project"
+export SENTRY_DSN="https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7"
 
 # Or use system property
-java -Dsentry.dsn="https://key@sentry.io/project" MyApp
+java -Dsentry.dsn="https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7" MyApp
 
 # Or pass to constructor
-BugTrackerClient tracker = new BugTrackerClient("https://key@sentry.io/project");
+BugTrackerClient tracker = new BugTrackerClient("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7");
 ```
 
 ### Issue: ClassNotFoundException

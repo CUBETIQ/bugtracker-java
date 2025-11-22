@@ -238,7 +238,7 @@ bugTracker.captureMessage(event.getMessage(), event.getLevel());
 
 ```java
 BugTrackerClient client = BugTrackerClient.builder()
-    .setDsn("https://key@sentry.io/project")
+    .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
     .setEnvironment("production")
     .setRelease("1.0.0-rc1")
     .setServerName("api-server-01")

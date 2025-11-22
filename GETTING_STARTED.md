@@ -170,7 +170,7 @@ logger.info("Info message");        // Sends to Sentry as INFO
 ```java
 BugTrackerClient tracker = BugTrackerClient.builder()
     // Sentry configuration
-    .setDsn("https://key@sentry.io/project-id")
+    .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7-id")
     .setEnvironment("production")
     .setRelease("1.0.0")
     .setServerName("api-server-01")
@@ -196,7 +196,7 @@ Set these environment variables instead of using the builder:
 
 ```bash
 # Required
-export BUGTRACKER_SENTRY_DSN="https://key@sentry.io/project-id"
+export BUGTRACKER_SENTRY_DSN="https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7-id"
 
 # Optional
 export ENVIRONMENT="production"
@@ -206,7 +206,7 @@ export APP_RELEASE="1.0.0"
 Or use system properties:
 
 ```bash
-java -Dbugtracker.sentry.dsn="https://key@sentry.io/project-id" \
+java -Dbugtracker.sentry.dsn="https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7-id" \
      -Dapp.environment="production" \
      -jar your-app.jar
 ```
