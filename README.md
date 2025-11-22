@@ -12,8 +12,16 @@ A flexible, high-performance wrapper around Sentry for Java applications. BugTra
 - 📋 **Java Logging Integration** - Automatic JUL handler for seamless integration
 - 🔒 **Thread-Safe** - Built with concurrent applications in mind
 - ⚡ **Low Overhead** - Minimal performance impact on your application
+- ☕ **Java 1.8 to Latest** - Supports Java 1.8 through Java 21+
 
 ## Installation
+
+### Requirements
+
+- **Java Version**: 1.8 or higher (tested on Java 8, 11, 17, and 21)
+- **Build Tool**: Gradle 8.0+ or Maven 3.6+
+
+### Add to Project
 
 Add to your `build.gradle`:
 
@@ -33,6 +41,8 @@ Or with Maven `pom.xml`:
 </dependency>
 ```
 
+> **Note:** For detailed Java version compatibility information, see [JAVA_COMPATIBILITY.md](./JAVA_COMPATIBILITY.md)
+
 ## Quick Start
 
 ### Basic Initialization
@@ -42,7 +52,7 @@ import com.cubetiqs.sdk.bugtracker.BugTrackerClient;
 
 // Create and initialize client
 BugTrackerClient bugTracker = BugTrackerClient.builder()
-    .setDsn("https://your-dsn@sentry.io/project-id")
+    .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
     .setEnvironment("production")
     .setRelease("1.0.0")
     .setDebugEnabled(false)

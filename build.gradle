@@ -1,13 +1,14 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'com.cubetiqs.sdk'
 version = '1.0.0'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 repositories {
@@ -16,20 +17,24 @@ repositories {
 
 dependencies {
     // Sentry for error tracking
-    implementation("io.sentry:sentry:8.26.0")
+    // Using 7.x for Java 1.8 compatibility (8.x requires Java 11)
+    implementation("io.sentry:sentry:7.10.0")
 
     // Logging
-    implementation("org.slf4j:slf4j-api:2.0.11")
-    implementation("ch.qos.logback:logback-classic:1.4.14")
+    // Using 1.7.x for Java 1.8 compatibility, 2.x requires Java 1.9+
+    implementation("org.slf4j:slf4j-api:1.7.36")
+    implementation("ch.qos.logback:logback-classic:1.2.13")
 
     // Utilities
-    implementation("com.google.guava:guava:32.1.3-jre")
+    // Using 30.x for Java 1.8 compatibility, 32.x requires Java 9+
+    implementation("com.google.guava:guava:30.1.1-jre")
 
     // Testing
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.mockito:mockito-core:5.7.0'
-    testImplementation 'org.mockito:mockito-junit-jupiter:5.7.0'
+    // Using JUnit 4 for Java 1.8 compatibility
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+    testImplementation 'org.junit.vintage:junit-vintage-engine:5.9.3'
+    testImplementation 'org.mockito:mockito-core:4.11.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.11.0'
 }
 
 test {
@@ -43,4 +48,32 @@ jar {
                 'Implementation-Version': project.version
         )
     }
+}
+
+shadowJar {
+    archiveBaseName = 'bugtracker-java'
+    archiveClassifier = 'all'
+    archiveVersion = project.version
+    
+    manifest {
+        attributes(
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version,
+                'Bundle-Name': 'BugTracker SDK Bundle',
+                'Bundle-Description': 'BugTracker SDK with all dependencies bundled',
+                'Created-By': 'Gradle Shadow Plugin'
+        )
+    }
+    
+    // Relocate packages to avoid conflicts
+    relocate 'io.sentry', 'com.cubetiqs.sdk.internal.sentry'
+    relocate 'org.slf4j', 'com.cubetiqs.sdk.internal.slf4j'
+    relocate 'ch.qos.logback', 'com.cubetiqs.sdk.internal.logback'
+    relocate 'com.google.common', 'com.cubetiqs.sdk.internal.guava'
+    
+    // Exclude unnecessary files
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    exclude 'META-INF/versions/**'
 }

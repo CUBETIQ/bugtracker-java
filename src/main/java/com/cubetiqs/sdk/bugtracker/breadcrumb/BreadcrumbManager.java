@@ -26,7 +26,7 @@ public class BreadcrumbManager {
 
     public void addBreadcrumb(BreadcrumbBuilder builder) {
         Objects.requireNonNull(builder, "builder");
-        var breadcrumb = new io.sentry.Breadcrumb();
+        io.sentry.Breadcrumb breadcrumb = new io.sentry.Breadcrumb();
         breadcrumb.setMessage(builder.getMessage());
         breadcrumb.setLevel(builder.getLevel());
         if (builder.getCategory() != null) {
@@ -41,14 +41,14 @@ public class BreadcrumbManager {
     }
 
     public void http(String method, String url, int statusCode) {
-        var builder = new BreadcrumbBuilder(method + " " + url)
+        BreadcrumbBuilder builder = new BreadcrumbBuilder(method + " " + url)
                 .category("http")
                 .withData("status_code", String.valueOf(statusCode));
         addBreadcrumb(builder);
     }
 
     public void database(String query) {
-        var builder = new BreadcrumbBuilder("Database query")
+        BreadcrumbBuilder builder = new BreadcrumbBuilder("Database query")
                 .category("database")
                 .level(SentryLevel.DEBUG)
                 .withData("query", query);
@@ -56,13 +56,13 @@ public class BreadcrumbManager {
     }
 
     public void userAction(String action) {
-        var builder = new BreadcrumbBuilder(action)
+        BreadcrumbBuilder builder = new BreadcrumbBuilder(action)
                 .category("user-action");
         addBreadcrumb(builder);
     }
 
     public void error(String message, String errorType) {
-        var builder = new BreadcrumbBuilder(message)
+        BreadcrumbBuilder builder = new BreadcrumbBuilder(message)
                 .category("error")
                 .level(SentryLevel.ERROR)
                 .withData("error_type", errorType);

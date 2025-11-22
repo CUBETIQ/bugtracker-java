@@ -28,7 +28,7 @@ public class BugTrackerExamples {
     public static void basicInitialization() {
         // Create and initialize the client
         BugTrackerClient tracker = BugTrackerClient.builder()
-                .setDsn("https://your-dsn@sentry.io/project-id")
+                .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
                 .setEnvironment("production")
                 .setRelease("1.0.0")
                 .setDebugEnabled(false)
@@ -54,7 +54,7 @@ public class BugTrackerExamples {
      */
     public static void contextManagement() {
         BugTrackerClient tracker = BugTrackerClient.builder()
-                .setDsn("https://your-dsn@sentry.io/project-id")
+                .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
                 .build();
 
         tracker.initialize();
@@ -86,7 +86,7 @@ public class BugTrackerExamples {
      */
     public static void breadcrumbTracking() {
         BugTrackerClient tracker = BugTrackerClient.builder()
-                .setDsn("https://your-dsn@sentry.io/project-id")
+                .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
                 .build();
 
         tracker.initialize();
@@ -133,7 +133,7 @@ public class BugTrackerExamples {
      */
     public static void performanceMonitoring() {
         BugTrackerClient tracker = BugTrackerClient.builder()
-                .setDsn("https://your-dsn@sentry.io/project-id")
+                .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
                 .setTracesSampleRate(1.0) // 100% sampling for this example
                 .build();
 
@@ -142,7 +142,7 @@ public class BugTrackerExamples {
         // Create a transaction for an HTTP request
         try (TransactionManager transaction = TransactionManager.start("user-registration", "http.request")) {
             // Simulate database operation
-            var dbSpan = transaction.startChild("db.operation", "INSERT INTO users");
+            io.sentry.ISpan dbSpan = transaction.startChild("db.operation", "INSERT INTO users");
             try {
                 simulateDatabaseInsert();
             } catch (InterruptedException e) {
@@ -151,7 +151,7 @@ public class BugTrackerExamples {
             dbSpan.finish();
 
             // Simulate email sending
-            var emailSpan = transaction.startChild("email.send", "Send welcome email");
+            io.sentry.ISpan emailSpan = transaction.startChild("email.send", "Send welcome email");
             try {
                 simulateEmailSend();
             } catch (InterruptedException e) {
@@ -160,7 +160,7 @@ public class BugTrackerExamples {
             emailSpan.finish();
 
             // Simulate external API call
-            var apiSpan = transaction.startChild("http.client", "POST /api/notifications");
+            io.sentry.ISpan apiSpan = transaction.startChild("http.client", "POST /api/notifications");
             try {
                 simulateApiCall();
             } catch (InterruptedException e) {
@@ -179,7 +179,7 @@ public class BugTrackerExamples {
      */
     public static void lifecycleHooks() {
         BugTrackerClient tracker = BugTrackerClient.builder()
-                .setDsn("https://your-dsn@sentry.io/project-id")
+                .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
                 .build();
 
         // Add hook to redact sensitive data
@@ -221,7 +221,7 @@ public class BugTrackerExamples {
      */
     public static void loggingIntegration() {
         BugTrackerClient tracker = BugTrackerClient.builder()
-                .setDsn("https://your-dsn@sentry.io/project-id")
+                .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
                 .build();
 
         tracker.initialize();
@@ -243,7 +243,7 @@ public class BugTrackerExamples {
      */
     public static void exceptionHandlingWithScope() {
         BugTrackerClient tracker = BugTrackerClient.builder()
-                .setDsn("https://your-dsn@sentry.io/project-id")
+                .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
                 .build();
 
         tracker.initialize();
