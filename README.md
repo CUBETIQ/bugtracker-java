@@ -260,7 +260,7 @@ BugTracker looks for configuration in this order:
 4. Default DSN: `https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7`
 
 ```bash
-export BUGTRACKER_SENTRY_DSN="https://your-dsn@sentry.io/project"
+export BUGTRACKER_SENTRY_DSN="https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7"
 java -jar your-app.jar
 ```
 

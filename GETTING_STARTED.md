@@ -42,7 +42,7 @@ public class Application {
     public static void main(String[] args) {
         // Create and initialize
         BugTrackerClient tracker = BugTrackerClient.builder()
-            .setDsn("https://your-key@sentry.io/your-project-id")
+            .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
             .build();
         
         tracker.initialize();
@@ -59,7 +59,7 @@ public class Application {
 
 ```java
 try (BugTrackerClient tracker = BugTrackerClient.builder()
-        .setDsn("https://your-key@sentry.io/your-project-id")
+        .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
         .build()) {
     tracker.initialize();
     

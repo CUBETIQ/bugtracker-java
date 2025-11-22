@@ -103,7 +103,7 @@ implementation 'com.cubetiqs.sdk:bugtracker:1.0.0'
 ### Quick Start
 ```java
 BugTrackerClient tracker = BugTrackerClient.builder()
-    .setDsn("https://your-dsn@sentry.io/project")
+    .setDsn("https://8fac51b682544aa8becdc8c364d812e1@bugtracker.ctdn.dev/7")
     .setEnvironment("production")
     .build();
 
