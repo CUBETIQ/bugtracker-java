@@ -60,8 +60,8 @@ jobs:
           ### Build Information
           - **Java Version**: 8 (compatible with 8-21)
           - **Build Tool**: Gradle 8.8
-          - **Standard JAR**: bugtracker-java-${{ steps.version.outputs.VERSION }}.jar
-          - **Shadow JAR**: bugtracker-java-${{ steps.version.outputs.VERSION }}-all.jar
+          - **Standard JAR**: bugtracker-${{ steps.version.outputs.VERSION }}.jar
+          - **Shadow JAR**: bugtracker-${{ steps.version.outputs.VERSION }}-all.jar
           
           ### Installation
           
@@ -84,7 +84,7 @@ jobs:
           ---
           *Built and released by GitHub Actions*
         files: |
-          build/libs/bugtracker-java-*.jar
+          build/libs/bugtracker-*.jar
         draft: false
         prerelease: false
       env:

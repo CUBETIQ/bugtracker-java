@@ -91,8 +91,8 @@ Provides convenient build commands with various options.
 ```
 
 Output:
-- Standard JAR: `build/libs/bugtracker-java-1.0.0.jar`
-- Shadow JAR: `build/libs/bugtracker-java-1.0.0-all.jar`
+- Standard JAR: `build/libs/bugtracker-1.0.0.jar`
+- Shadow JAR: `build/libs/bugtracker-1.0.0-all.jar`
 
 **Run Tests Only:**
 ```bash
@@ -153,7 +153,7 @@ Enter choice (1-5): 2
 Release Summary:
   Version:     1.1.0
   Tag:         v1.1.0
-  Build:       bugtracker-java-1.1.0-all.jar
+  Build:       bugtracker-1.1.0-all.jar
 
 Continue with release? (yes/no): yes
 ```
@@ -180,15 +180,15 @@ Continue with release? (yes/no): yes
 ### Standard Build (./scripts/build.sh)
 ```
 build/libs/
-├── bugtracker-java-1.0.0.jar           # Standard JAR (30KB)
+├── bugtracker-1.0.0.jar           # Standard JAR (30KB)
 └── (dependencies added via Gradle)
 ```
 
 ### With Shadow JAR (./scripts/build.sh --shadow)
 ```
 build/libs/
-├── bugtracker-java-1.0.0.jar           # Standard JAR (30KB)
-└── bugtracker-java-1.0.0-all.jar       # Shadow JAR with deps (5.3MB)
+├── bugtracker-1.0.0.jar           # Standard JAR (30KB)
+└── bugtracker-1.0.0-all.jar       # Shadow JAR with deps (5.3MB)
 ```
 
 ### Released Artifacts
@@ -225,7 +225,7 @@ git stash
 ### Issue: "Not a git repository"
 **Solution:** Ensure you're in the project root directory
 ```bash
-cd /path/to/bugtracker-java
+cd ~/projects/bugtracker-java
 ```
 
 ### Issue: "Build failed"
@@ -354,7 +354,7 @@ git merge release/1.2.0
 # release-batch.sh
 
 for project in bugtracker-java bugtracker-js; do
-    cd "/path/to/$project"
+    cd ~"/projects/$project"
     ./scripts/release.sh -v 1.2.0 --force
 done
 ```

@@ -62,8 +62,8 @@ ${BLUE}EXAMPLES:${NC}
   ./scripts/build.sh --clean-cache --info
 
 ${BLUE}OUTPUT:${NC}
-  • Standard JAR:     build/libs/bugtracker-java-*.jar
-  • Shadow JAR:       build/libs/bugtracker-java-*-all.jar
+  • Standard JAR:     build/libs/bugtracker-*.jar
+  • Shadow JAR:       build/libs/bugtracker-*-all.jar
   • Test Reports:     build/reports/tests/
 
 EOF
@@ -121,8 +121,8 @@ main() {
     echo ""
     echo -e "${CYAN}Output artifacts:${NC}"
     
-    if ls build/libs/bugtracker-java-*.jar 1> /dev/null 2>&1; then
-        ls -lh build/libs/bugtracker-java-*.jar | awk '{print "  " $9 " (" $5 ")"}'
+    if ls build/libs/bugtracker-*.jar 1> /dev/null 2>&1; then
+        ls -lh build/libs/bugtracker-*.jar | awk '{print "  " $9 " (" $5 ")"}'
     fi
     
     echo ""

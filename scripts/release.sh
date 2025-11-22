@@ -280,7 +280,7 @@ confirm_release() {
     print_info "Release Summary:"
     echo "  Version:     ${GREEN}$VERSION${NC}"
     echo "  Tag:         ${GREEN}$TAG${NC}"
-    echo "  Build:       ${GREEN}bugtracker-java-$VERSION-all.jar${NC}"
+    echo "  Build:       ${GREEN}bugtracker-$VERSION-all.jar${NC}"
     echo ""
     
     if [ "$DRY_RUN" = true ]; then
@@ -321,7 +321,7 @@ $changelog_content
 ## Build Information
 - **Date**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
 - **Version**: $VERSION
-- **Artifact**: bugtracker-java-$VERSION-all.jar
+- **Artifact**: bugtracker-$VERSION-all.jar
 
 ---
 Released by BugTracker Release Script"
@@ -418,8 +418,8 @@ show_summary() {
         echo -e "Release details:"
         echo -e "  Version:       ${GREEN}$VERSION${NC}"
         echo -e "  Tag:           ${GREEN}$TAG${NC}"
-        echo -e "  Shadow JAR:    ${GREEN}bugtracker-java-$VERSION-all.jar${NC}"
-        echo -e "  Standard JAR:  ${GREEN}bugtracker-java-$VERSION.jar${NC}"
+        echo -e "  Shadow JAR:    ${GREEN}bugtracker-$VERSION-all.jar${NC}"
+        echo -e "  Standard JAR:  ${GREEN}bugtracker-$VERSION.jar${NC}"
         echo ""
     else
         echo -e "${YELLOW}To perform actual release, remove --dry-run flag${NC}"

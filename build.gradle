@@ -51,7 +51,7 @@ jar {
 }
 
 shadowJar {
-    archiveBaseName = 'bugtracker-java'
+    archiveBaseName = 'bugtracker'
     archiveClassifier = 'all'
     archiveVersion = project.version
     
