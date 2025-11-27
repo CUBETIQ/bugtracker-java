@@ -29,6 +29,10 @@ dependencies {
     // Using 30.x for Java 1.8 compatibility, 32.x requires Java 9+
     implementation("com.google.guava:guava:30.1.1-jre")
 
+    // HTTP Client for Analytics
+    // Using 3.x for Java 1.8 compatibility, 4.x requires Java 11+
+    implementation("com.konghq:unirest-java:3.14.5")
+
     // Testing
     // Using JUnit 4 for Java 1.8 compatibility
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
@@ -70,6 +74,7 @@ shadowJar {
     relocate 'org.slf4j', 'com.cubetiqs.sdk.internal.slf4j'
     relocate 'ch.qos.logback', 'com.cubetiqs.sdk.internal.logback'
     relocate 'com.google.common', 'com.cubetiqs.sdk.internal.guava'
+    relocate 'kong.unirest', 'com.cubetiqs.sdk.internal.unirest'
     
     // Exclude unnecessary files
     exclude 'META-INF/*.SF'
