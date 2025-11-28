@@ -272,4 +272,42 @@ class CubisAnalyticsClientTest {
         boolean result = client.identify("");
         assertFalse(result);
     }
+
+    @Test
+    void testIdentitySwitching() {
+        client.initialize();
+
+        // First user logs in
+        boolean result1 = client.identify("user-123");
+        assertTrue(result1);
+        assertEquals("user-123", client.getCurrentUserId());
+
+        // Track some events with first user
+        client.trackPageView("/dashboard", "Dashboard");
+        assertTrue(client.getEventsQueued() > 0);
+
+        // User logs out
+        client.clearIdentity();
+        assertNull(client.getCurrentUserId());
+
+        // Different user logs in
+        boolean result2 = client.identify("user-456");
+        assertTrue(result2);
+        assertEquals("user-456", client.getCurrentUserId());
+
+        // Track events with second user
+        client.trackPageView("/profile", "Profile");
+
+        // Verify events were tracked
+        assertTrue(client.getEventsQueued() > 2);
+    }
+
+    @Test
+    void testClearIdentityWithoutIdentify() {
+        client.initialize();
+
+        // Clearing identity when no user is identified should not throw
+        assertDoesNotThrow(() -> client.clearIdentity());
+        assertNull(client.getCurrentUserId());
+    }
 }

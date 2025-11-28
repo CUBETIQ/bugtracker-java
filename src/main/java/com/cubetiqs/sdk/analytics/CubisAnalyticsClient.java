@@ -293,6 +293,11 @@ public class CubisAnalyticsClient implements AutoCloseable {
         }
 
         try {
+            // Clear cache when user identity changes to ensure fresh tracking
+            if (eventSender != null) {
+                eventSender.clearCache();
+            }
+
             // Update current user ID - all subsequent events will use this
             this.currentUserId = userId;
             logger.info("User identified: {} (all subsequent events will use this user ID)", userId);
@@ -326,6 +331,12 @@ public class CubisAnalyticsClient implements AutoCloseable {
      */
     public void clearIdentity() {
         logger.info("Clearing user identity. Subsequent events will use session ID.");
+
+        // Clear cache when identity is cleared to ensure fresh tracking
+        if (eventSender != null) {
+            eventSender.clearCache();
+        }
+
         this.currentUserId = null;
     }
 

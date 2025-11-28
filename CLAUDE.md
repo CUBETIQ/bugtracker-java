@@ -98,6 +98,7 @@ This SDK provides two main components:
 - **No Errors**: Graceful degradation when analytics server is down or slow
 - **Session Management**: Persistent session ID per client instance for event correlation
 - **User Identification**: Support for user tracking with login/logout (identify/clearIdentity)
+- **Automatic Cache Management**: Cache is automatically cleared when user identity changes to ensure fresh tracking
 - **Dynamic User-Agent**: Auto-detects OS, version, and architecture for realistic browser emulation
 - **Pageview vs Events**: Separate methods for pageviews (Overview stats) and custom events (Events tab)
 
@@ -112,10 +113,10 @@ track() → validate enabled/initialized → build EventPayload (with name)
 → use currentUserId if set, else sessionId → enqueue() [non-blocking return]
 
 # User identification (login)
-identify() → set currentUserId → send identify event → all subsequent events use userId
+identify() → clear cache → set currentUserId → send identify event → all subsequent events use userId
 
 # Clear identity (logout)
-clearIdentity() → clear currentUserId → subsequent events revert to sessionId
+clearIdentity() → clear cache → clear currentUserId → subsequent events revert to sessionId
 
 # Common processing path
 → EventQueue [bounded queue] → Worker Thread polls
@@ -166,7 +167,7 @@ captureMessage() → create SentryEvent → apply context (user/tags/extras)
 
 **Test Coverage:**
 - BugTracker: EventBuilder (5), ContextManager (5), HookManager (4), BugTrackerClient (6)
-- Analytics: CubisAnalyticsClient (16), EventPayload (11), JsonSerializer (7)
+- Analytics: CubisAnalyticsClient (18), EventPayload (11), JsonSerializer (7)
 
 **Running Tests:**
 ```bash
@@ -406,6 +407,15 @@ The SDK automatically detects the system user for default context:
 - No authentication required
 - Requires proper `User-Agent` header (automatically set)
 - Response includes: `cache`, `sessionId`, `visitId`
+
+### Cache Management
+- **Cache Header**: `x-umami-cache` header sent with each request for visitor tracking
+- **Cache Extraction**: Response cache value is extracted and stored for subsequent requests
+- **Automatic Clearing**: Cache is automatically cleared when user identity changes via:
+  - `identify(userId, userData)` - Clear cache when new user logs in
+  - `clearIdentity()` - Clear cache when user logs out
+- **Purpose**: Ensures Umami can properly track new visitors/users when identity changes
+- **Importance**: Without cache clearing, new users would be tracked with the previous user's cache, causing incorrect analytics
 
 ### Error Handling Strategy
 - **Never throws exceptions** to calling code

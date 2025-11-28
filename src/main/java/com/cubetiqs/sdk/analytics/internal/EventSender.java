@@ -180,6 +180,15 @@ public class EventSender {
     }
 
     /**
+     * Clear cached value.
+     * Should be called when user identity changes to ensure fresh tracking.
+     */
+    public void clearCache() {
+        this.cacheValue = null;
+        logger.debug("Cache cleared");
+    }
+
+    /**
      * Shutdown Unirest client.
      */
     public void shutdown() {
