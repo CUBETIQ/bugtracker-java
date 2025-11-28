@@ -138,4 +138,33 @@ class EventPayloadTest {
         assertEquals("value", payload.getData().get("key"));
         assertNull(payload.getData().get("new-key"));
     }
+
+    @Test
+    void testPageviewBuilderWithoutName() {
+        // Pageview events should not have a name field
+        EventPayload payload = EventPayload.pageviewBuilder(TEST_WEBSITE_ID)
+                .setUrl("/page")
+                .setTitle("Page Title")
+                .build();
+
+        assertNotNull(payload);
+        assertEquals(TEST_WEBSITE_ID, payload.getWebsite());
+        assertNull(payload.getName()); // Name should be null for pageviews
+        assertEquals("/page", payload.getUrl());
+        assertEquals("Page Title", payload.getTitle());
+    }
+
+    @Test
+    void testPageviewBuilderDefaults() {
+        EventPayload payload = EventPayload.pageviewBuilder(TEST_WEBSITE_ID).build();
+
+        assertNotNull(payload);
+        assertNull(payload.getName()); // Pageviews don't have names
+        assertNotNull(payload.getHostname());
+        assertNotNull(payload.getLanguage());
+        assertEquals("1920x1080", payload.getScreen());
+        assertEquals("/", payload.getUrl());
+        assertEquals("", payload.getReferrer());
+        assertEquals("", payload.getTitle()); // Empty title for pageviews when not set
+    }
 }

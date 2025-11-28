@@ -84,7 +84,7 @@ public class EventPayload {
      * Use this for tracking custom events that will appear in the Events tab.
      */
     public static Builder builder(String website, String name) {
-        return new Builder(website, name);
+        return new Builder(website, name, false);
     }
 
     /**
@@ -92,7 +92,7 @@ public class EventPayload {
      * Use this for tracking pageviews that will appear in the Overview/Statistics.
      */
     public static Builder pageviewBuilder(String website) {
-        return new Builder(website, null);
+        return new Builder(website, null, true);
     }
 
     public static class Builder {
@@ -108,11 +108,14 @@ public class EventPayload {
         private String id;
         private Map<String, Object> data;
 
-        private Builder(String website, String name) {
+        private Builder(String website, String name, boolean isPageview) {
             if (website == null || website.trim().isEmpty()) {
                 throw new IllegalArgumentException("Website ID is required");
             }
-            // Name can be null for pageview events
+            // Name is required for custom events, but optional for pageviews
+            if (!isPageview && (name == null || name.trim().isEmpty())) {
+                throw new IllegalArgumentException("Event name is required");
+            }
             this.website = website;
             this.name = name;
             this.id = UUID.randomUUID().toString();

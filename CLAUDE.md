@@ -77,17 +77,18 @@ This SDK provides two main components:
 **Package: `com.cubetiqs.sdk.analytics`**
 
 **Core Components:**
-- `CubisAnalyticsClient` - Main facade for Umami analytics tracking with non-blocking operations
+- `CubisAnalyticsClient` - Main facade for Umami analytics tracking with non-blocking operations, session management, and user identification
 - `CubisAnalyticsConfig` - Configuration with required fields (url, websiteId) and optional settings (enabled, retry, queue size, etc.)
 
 **Event Models:**
-- `EventPayload` - Umami API payload with fields: hostname, screen, language, url, referrer, title, tag, id, website, name, data
+- `EventPayload` - Umami API payload with fields: hostname, screen, language, url, referrer, title, tag, id, website, name (optional for pageviews), data
 - `AnalyticsEvent` - Event wrapper with payload, type, timestamp, and retry tracking
 
 **Internal Components:**
 - `EventQueue` - Bounded blocking queue with worker threads for async processing (prevents memory issues)
-- `EventSender` - HTTP sender with exponential backoff retry logic (uses HttpURLConnection for zero external deps)
+- `EventSender` - HTTP sender with exponential backoff retry logic (uses Unirest HTTP client)
 - `JsonSerializer` - Lightweight JSON serialization without external libraries
+- `UserAgentBuilder` - Dynamic User-Agent builder based on system properties (OS, version, architecture)
 
 **Key Features:**
 - **Non-blocking**: Events queued immediately, processed by background worker threads
@@ -95,13 +96,32 @@ This SDK provides two main components:
 - **High Performance**: Bounded queue (default: 10,000), daemon worker threads
 - **Reliable**: All exceptions caught and logged, never throws to application
 - **No Errors**: Graceful degradation when analytics server is down or slow
+- **Session Management**: Persistent session ID per client instance for event correlation
+- **User Identification**: Support for user tracking with login/logout (identify/clearIdentity)
+- **Dynamic User-Agent**: Auto-detects OS, version, and architecture for realistic browser emulation
+- **Pageview vs Events**: Separate methods for pageviews (Overview stats) and custom events (Events tab)
 
 **Event Flow:**
 ```
-track() → validate enabled/initialized → build EventPayload → wrap in AnalyticsEvent
-→ enqueue() [non-blocking return] → EventQueue [bounded queue]
-→ Worker Thread polls → EventSender.send() → HTTP POST to /api/send
-→ Retry with exponential backoff on failure → Update statistics
+# Pageview tracking (for Overview/Statistics)
+trackPageView() → validate enabled/initialized → build EventPayload (name=null)
+→ use currentUserId if set, else sessionId → enqueue() [non-blocking return]
+
+# Custom event tracking (for Events tab)
+track() → validate enabled/initialized → build EventPayload (with name)
+→ use currentUserId if set, else sessionId → enqueue() [non-blocking return]
+
+# User identification (login)
+identify() → set currentUserId → send identify event → all subsequent events use userId
+
+# Clear identity (logout)
+clearIdentity() → clear currentUserId → subsequent events revert to sessionId
+
+# Common processing path
+→ EventQueue [bounded queue] → Worker Thread polls
+→ EventSender.send() → HTTP POST to /api/send with cache header
+→ Retry with exponential backoff on failure → Extract cache from response
+→ Update statistics
 ```
 
 **Configuration Options:**
@@ -146,7 +166,7 @@ captureMessage() → create SentryEvent → apply context (user/tags/extras)
 
 **Test Coverage:**
 - BugTracker: EventBuilder (5), ContextManager (5), HookManager (4), BugTrackerClient (6)
-- Analytics: CubisAnalyticsClient (16), EventPayload (9), JsonSerializer (7)
+- Analytics: CubisAnalyticsClient (16), EventPayload (11), JsonSerializer (7)
 
 **Running Tests:**
 ```bash
@@ -242,13 +262,31 @@ CubisAnalyticsClient analytics = CubisAnalyticsClient.builder(url, websiteId)
     .build();
 analytics.initialize();
 
-// Track events
-analytics.track("event-name", "/page-url", "Page Title");
+// Track pageviews (appear in Umami Overview/Statistics)
+analytics.trackPageView("/", "Home Page");
+analytics.trackPageView("/about", "About Page");
+
+// Track custom events (appear in Umami Events tab)
+analytics.track("button-click", "/page-url", "Page Title");
 analytics.track("event-with-data", "/page", "Title", Map.of("key", "value"));
+
+// User identification (for login scenarios)
+Map<String, Object> userData = Map.of("name", "John", "email", "john@example.com");
+analytics.identify("user-123", userData);
+
+// All subsequent events will use user-123 as ID
+analytics.trackPageView("/dashboard", "Dashboard");
+
+// Clear identity (for logout scenarios)
+analytics.clearIdentity();
 
 // Cleanup
 analytics.close();
 ```
+
+**Important Distinction:**
+- **Pageviews** (`trackPageView`): No event name, shows in Overview/Statistics, counts as page visits
+- **Custom Events** (`track`): Has event name, shows in Events tab, tracks specific actions
 
 #### Adding Custom Event Tracking
 1. Build `EventPayload` with required and optional fields

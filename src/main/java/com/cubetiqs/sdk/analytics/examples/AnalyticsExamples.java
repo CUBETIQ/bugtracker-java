@@ -88,8 +88,11 @@ public class AnalyticsExamples {
         analytics.identify("user-12345", user1Data);
 
         // All subsequent events will use user-12345 as the ID
-        System.out.println("2. Tracking events with user-12345...");
-        analytics.track("dashboard-view", "/dashboard", "Dashboard");
+        System.out.println("2. Tracking pageviews with user-12345...");
+        analytics.trackPageView("/dashboard", "Dashboard");
+        analytics.trackPageView("/profile", "Profile");
+
+        // Track custom events too
         analytics.track("profile-edit", "/profile", "Edit Profile");
 
         // User logs out - clear identity
@@ -97,7 +100,8 @@ public class AnalyticsExamples {
         analytics.clearIdentity();
 
         // Events now use session ID
-        System.out.println("4. Tracking events with session ID...");
+        System.out.println("4. Tracking events with session ID (after logout)...");
+        analytics.trackPageView("/", "Home");
         analytics.track("logout", "/", "Logged Out");
 
         // Different user logs in
@@ -110,9 +114,12 @@ public class AnalyticsExamples {
         analytics.identify("user-67890", user2Data);
 
         // Events now use user-67890 as the ID
-        System.out.println("6. Tracking events with user-67890...");
-        analytics.track("dashboard-view", "/dashboard", "Dashboard");
-        analytics.track("settings-view", "/settings", "Settings");
+        System.out.println("6. Tracking pageviews with user-67890...");
+        analytics.trackPageView("/dashboard", "Dashboard");
+        analytics.trackPageView("/settings", "Settings");
+
+        // Track custom events
+        analytics.track("settings-changed", "/settings", "Settings Changed");
 
         analytics.flush(5, TimeUnit.SECONDS);
         analytics.close();
